@@ -206,6 +206,36 @@
   }
   .result-card .row span:last-child{font-weight:700; color:var(--chalk);}
 
+
+  /* upcoming fixtures */
+  .fixtures{display:flex; flex-direction:column; gap:8px;}
+  .fixture{
+    background: linear-gradient(180deg, #24445A, #1B3A4B);
+    border:1px solid rgba(247,243,233,0.1);
+    border-radius:10px;
+    padding:12px 14px;
+  }
+  .fixture.moved{border-color:rgba(232,72,58,0.45);}
+  .fx-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11.5px; color:#9AA6AC; margin-bottom:8px; gap:8px;
+  }
+  .fx-head .when{font-weight:700; color:var(--chalk);}
+  .moved-tag{
+    background:rgba(232,72,58,0.18); color:#F3A79E;
+    border:1px solid rgba(232,72,58,0.4);
+    padding:2px 8px; border-radius:999px; font-size:10.5px; font-weight:700; white-space:nowrap;
+  }
+  .fx-match{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    font-weight:700; font-size:14.5px;
+  }
+  .fx-team{display:flex; align-items:center; gap:6px; flex:1 1 0; min-width:0;}
+  .fx-team.away{justify-content:flex-end; text-align:right;}
+  .fx-team img{width:20px; height:20px; object-fit:contain; flex:0 0 auto;}
+  .fx-vs{color:#7C8890; font-weight:400; flex:0 0 auto;}
+  .fx-ref{font-size:11.5px; color:#9AA6AC; margin-top:8px;}
+
   footer{
     margin-top:28px;
     font-size:11.5px;
@@ -240,6 +270,9 @@
     <div class="sub">gewonnene minus verlorene Spielerinnen-Punkte</div>
     <canvas id="chartSpieler" height="260"></canvas>
   </div>
+
+    <div class="section-title">Kommende Spiele</div>
+  <div class="fixtures" id="fixtures"></div>
 
   <div class="section-title">Bisherige Ergebnisse</div>
   <div class="results-row" id="results-row"></div>
@@ -386,6 +419,44 @@ new Chart(document.getElementById('chartSpieler'), {
     plugins:{ legend:{display:false}, tooltip:{callbacks:{label:(ctx)=>'Spielerinnen-Diff: '+ (ctx.raw>0?'+':'') + ctx.raw}} },
     scales: commonScales
   }
+});
+
+const upcoming = [
+  {nr:14, datum:"Di, 03.11.2026", zeit:"20:15", heim:"Jheringsfehn", gast:"Wymeer I", ref:"Bingum"},
+  {nr:16, datum:"Mi, 18.11.2026", zeit:"20:30", heim:"Bingum", gast:"Rhauderfehn", ref:"Jheringsfehn"},
+  {nr:17, datum:"Do, 19.11.2026", zeit:"20:15", heim:"Wymeer I", gast:"Holthusen", ref:"Lehe"},
+  {nr:18, datum:"Mo, 23.11.2026", zeit:"20:15", heim:"Lehe", gast:"Bingum", ref:"Wymeer I"},
+  {nr:19, datum:"Do, 26.11.2026", zeit:"20:15", heim:"Wymeer II", gast:"Jheringsfehn", ref:"Rhauderfehn"},
+  {nr:20, datum:"Mo, 30.11.2026", zeit:"20:45", heim:"Rhauderfehn", gast:"Wymeer I", ref:"Holthusen"},
+  {nr:21, datum:"Di, 01.12.2026", zeit:"20:15", heim:"Holthusen", gast:"Jheringsfehn", ref:"Bingum"},
+  {nr:15, datum:"Mo, 07.12.2026", zeit:"20:45", heim:"Rhauderfehn", gast:"Wymeer II", ref:"Lehe", moved:true},
+  {nr:10, datum:"Do, 14.01.2027", zeit:"20:15", heim:"Wymeer II", gast:"Holthusen", ref:"Jheringsfehn", moved:true},
+  {nr:12, datum:"Mi, 20.01.2027", zeit:"20:30", heim:"Bingum", gast:"Jheringsfehn", ref:"Wymeer II", moved:true},
+];
+
+const fixturesEl = document.getElementById('fixtures');
+function fxTeam(name, cls){
+  const logo = teamLogos[name] ? `<img src="${teamLogos[name]}" alt="${name} Wappen">` : '';
+  return cls === 'away'
+    ? `<span class="fx-team away"><span>${name}</span>${logo}</span>`
+    : `<span class="fx-team">${logo}<span>${name}</span></span>`;
+}
+upcoming.forEach(f => {
+  const div = document.createElement('div');
+  div.className = 'fixture' + (f.moved ? ' moved' : '');
+  div.innerHTML = `
+    <div class="fx-head">
+      <span class="when">${f.datum} · ${f.zeit} Uhr</span>
+      ${f.moved ? '<span class="moved-tag">verlegt</span>' : '<span>Spiel ' + f.nr + '</span>'}
+    </div>
+    <div class="fx-match">
+      ${fxTeam(f.heim, 'home')}
+      <span class="fx-vs">:</span>
+      ${fxTeam(f.gast, 'away')}
+    </div>
+    <div class="fx-ref">Schiedsgericht: ${f.ref}${f.moved ? ' · Spiel ' + f.nr : ''}</div>
+  `;
+  fixturesEl.appendChild(div);
 });
 </script>
 </body>
