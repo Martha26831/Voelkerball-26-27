@@ -371,7 +371,8 @@ rows.forEach((r, i) => {
 });
 
 const resultsRow = document.getElementById('results-row');
-results.forEach(r => {
+const playDate = {1:'2026-09-01',2:'2026-09-03',3:'2026-09-08',4:'2026-09-09',5:'2026-09-14',6:'2026-09-17',7:'2026-09-21',8:'2026-09-24',9:'2026-09-29',10:'2027-01-14',11:'2026-10-06',12:'2027-01-20',13:'2026-11-02',14:'2026-11-03',15:'2026-12-07',16:'2026-11-18',17:'2026-11-19',18:'2026-11-23',19:'2026-11-26',20:'2026-11-30',21:'2026-12-01'};
+[...results].sort((a,b) => playDate[b.nr].localeCompare(playDate[a.nr])).forEach(r => {
   const heimWin = r.satzH > r.satzG;
   const div = document.createElement('div');
   div.className = 'result-card';
